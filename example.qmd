@@ -1,0 +1,73 @@
+---
+title: "D2 Example"
+filters:
+  - d2
+---
+
+### Basic Use
+
+To use the d2 filter, add the d2 class to your code blocks and write your diagram code inside the code block. Here is a basic example:
+
+````markdown
+```{.d2}
+x -> y
+```
+````
+
+```{.d2}
+x -> y
+```
+
+### Adding Attributes
+
+You can specify additional attributes to control the appearance and layout of the diagram.
+
+- `theme`: Specifies the theme of the diagram. Default is `NeutralDefault`.
+- `layout`: Specifies the layout algorithm to use. Default is `dagre`.
+- `format`: Specifies the format of the output image. Default is `svg`.
+- `sketch`: Whether to use a "sketch" style for the diagram. Default is `false`.
+- `pad`: Amount of padding around the diagram. Default is `100`.
+
+Here's an example that uses multiple attributes:
+
+````markdown
+```{.d2 theme="CoolClassics" layout="elk" pad=20}
+x -> y
+```
+````
+
+```{.d2 theme="CoolClassics" layout="elk" pad=20}
+x -> y
+```
+
+
+### Using Captions
+
+You can also add captions to your diagrams by using the `caption` attribute.
+
+````markdown
+```{.d2 pad=20 caption="This is a caption"}
+x -> y
+```
+````
+
+```{.d2 pad=20 caption="This is a caption"}
+x -> y
+```
+
+
+### Setting Output Folder and File Name
+
+You can specify a folder where the generated diagram will be saved using the `folder` attribute. The `filename` attribute allows you to set a custom name for the output file.
+
+````markdown
+```{.d2 folder="./images" filename="my_diagram"}
+x -> y
+```
+````
+
+```{.d2 folder="./images" filename="my_diagram"}
+x -> y
+```
+
+Note: If the `folder` attribute is not provided, the image will be embedded inline in the document.
