@@ -22,9 +22,11 @@ quarto add data-intuitive/quarto-d2
 This will install the extension under the `_extensions` subdirectory. If
 you’re using version control, you will want to check in this directory.
 
-## Example
+## Usage
 
-Here is the source code for a [minimal example](example.qmd):
+To use the d2 filter, add the d2 filter to your quarto document. Next,
+add the `.d2` class to any code blocks containing D2 diagram code. Here
+is a basic example:
 
 ```` markdown
 ---
@@ -44,12 +46,82 @@ With this setup, the `d2` filter will process any code blocks with the
 That’s it! Now you know how to use the `d2` filter to generate diagrams
 in your quarto documents.
 
-## Usage
+## Attributes
 
-### Basic Use
+You can specify additional attributes to control the appearance and
+layout of the diagram.
 
-To use the d2 filter, add the d2 class to your code blocks and write
-your diagram code inside the code block. Here is a basic example:
+- `theme`: Specifies the theme of the diagram. Default is
+  `NeutralDefault`. Options are `NeutralDefault`, `NeutralGrey`,
+  `FlagshipTerrastruct`, `CoolClassics`, `MixedBerryBlue`, `GrapeSoda`,
+  `Aubergine`, `ColorblindClear`, `VanillaNitroCola`, `ShirelyTemple`,
+  `EarthTones`, `EvergladeGreen`, `ButteredToast`, `DarkMauve`,
+  `Terminal`, `TerminalGrayscale`, `Origami`.
+- `layout`: Specifies the layout algorithm to use. Default is `elk`.
+  Options are `dagre`, `elk`, `tala`.
+- `format`: Specifies the format of the output image. Default is `svg`.
+  Option are `svg`, `png`, `pdf`.
+- `sketch`: Whether to use a “sketch” style for the diagram. Default is
+  `false`.
+- `pad`: Amount of padding around the diagram. Default is `100`.
+- `caption`: Caption to add to the diagram.
+- `folder`: Folder where the generated diagram will be saved. If not
+  provided, the image will be embedded inline in the document (HTML
+  only).
+- `filename`: Name of the output file.
+
+Here’s an example that uses multiple attributes:
+
+```` markdown
+```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption"}
+x -> y -> z
+```
+````
+
+## Global Options
+
+You can set global options for the d2 filter using the `d2` option in
+the document metadata. Here’s an example:
+
+```` markdown
+---
+title: "D2 Example"
+filters:
+  - d2
+d2:
+  theme: "CoolClassics"
+  layout: "elk"
+  sketch: true
+  pad: 20
+---
+
+```{.d2}
+x -> y -> z
+```
+````
+
+## Setting Output Folder and File Name
+
+You can specify a folder where the generated diagram will be saved using
+the `folder` attribute. The `filename` attribute allows you to set a
+custom name for the output file.
+
+```` markdown
+```{.d2 folder="./images" filename="my_diagram"}
+x -> y -> z
+```
+````
+
+<div>
+
+> **Note**
+>
+> If the `folder` attribute is not provided and the output format is
+> HTML, the image will be embedded inline in the document.
+
+</div>
+
+## Example
 
 ```` markdown
 ```{.d2}
@@ -101,60 +173,3 @@ user -> network.portal.UI: access {
 ````
 
 ![](./images/diagram-1.svg)
-
-### Adding Attributes
-
-You can specify additional attributes to control the appearance and
-layout of the diagram.
-
-- `theme`: Specifies the theme of the diagram. Default is
-  `NeutralDefault`. Options are `NeutralDefault`, `NeutralGrey`,
-  `FlagshipTerrastruct`, `CoolClassics`, `MixedBerryBlue`, `GrapeSoda`,
-  `Aubergine`, `ColorblindClear`, `VanillaNitroCola`, `ShirelyTemple`,
-  `EarthTones`, `EvergladeGreen`, `ButteredToast`, `DarkMauve`,
-  `Terminal`, `TerminalGrayscale`, `Origami`.
-- `layout`: Specifies the layout algorithm to use. Default is `elk`.
-  Options are `dagre`, `elk`, `tala`.
-- `format`: Specifies the format of the output image. Default is `svg`.
-  Option are `svg`, `png`, `pdf`.
-- `sketch`: Whether to use a “sketch” style for the diagram. Default is
-  `false`.
-- `pad`: Amount of padding around the diagram. Default is `100`.
-- `caption`: Caption to add to the diagram.
-- `folder`: Folder where the generated diagram will be saved. If not
-  provided, the image will be embedded inline in the document (HTML
-  only).
-- `filename`: Name of the output file.
-
-Here’s an example that uses multiple attributes:
-
-```` markdown
-```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption"}
-x -> y -> z
-```
-````
-
-![This is a caption](./images/diagram-2.svg)
-
-### Setting Output Folder and File Name
-
-You can specify a folder where the generated diagram will be saved using
-the `folder` attribute. The `filename` attribute allows you to set a
-custom name for the output file.
-
-```` markdown
-```{.d2 folder="./images" filename="my_diagram"}
-x -> y -> z
-```
-````
-
-![](./images/my_diagram.svg)
-
-<div>
-
-> **Note**
->
-> If the `folder` attribute is not provided and the output format is
-> HTML, the image will be embedded inline in the document.
-
-</div>
