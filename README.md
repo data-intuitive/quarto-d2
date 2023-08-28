@@ -2,9 +2,19 @@
 
 This [Quarto](https://quarto.org) extension allows you to render
 [D2](https://d2lang.com) diagrams directly within your markdown
-documents. You can specify various attributes or global settings to
-control the appearance and layout of the diagrams. This extension was
-inspired by [`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
+documents.
+
+Main features:
+
+- Render [D2](https://d2lang.com) diagrams directly within your
+  [Quarto](https://quarto.org) markdown documents.
+- Control the appearance and layout of your diagrams using global
+  settings or code block attributes.
+- Tune the width and height of the resulting figures using the “width”
+  and “height” arguments.
+
+This extension was inspired by
+[`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
 
 ## Installation
 
