@@ -1,4 +1,4 @@
-# D2 Example
+# D2 Extension For Quarto
 
 The [Quarto](https://quarto.org) extension that allows you to generate
 [D2](https://d2lang.com) diagrams directly within your markdown

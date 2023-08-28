@@ -1,5 +1,6 @@
 ---
-title: "D2 Example"
+title: D2 Extension For Quarto
+format: gfm
 filters:
   - d2
 ---

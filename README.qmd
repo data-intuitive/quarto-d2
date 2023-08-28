@@ -1,6 +1,8 @@
 ---
 title: D2 Extension For Quarto
-format: gfm
+format:
+  gfm:
+    default-image-extension: svg
 filters:
   - d2
 ---
