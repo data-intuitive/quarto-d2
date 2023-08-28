@@ -46,7 +46,7 @@ function CodeBlock (cb)
   counter = counter + 1
   local options = {
     theme = D2Theme.NeutralDefault,
-    layout = D2Layout.dagre,
+    layout = D2Layout.elk,
     format = D2Format.svg,
     sketch = false,
     pad = 100,
