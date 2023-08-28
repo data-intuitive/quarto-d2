@@ -1,6 +1,3 @@
--- Import the lua pandoc API
-local pandoc = require 'pandoc'
-
 -- Enum for D2Theme
 local D2Theme = {
     NeutralDefault = 0,
@@ -90,61 +87,59 @@ function CodeBlock (cb)
     end
   end
 
-  -- Create temp file and write the content
-  local inputPath
+  -- Determine output path
   local outputPath
   if options.folder ~= nil then
-    -- Create the directory if it doesn't exist
     os.execute("mkdir -p " .. options.folder)
-
-    inputPath = options.folder .. "/temp_" .. counter .. ".txt"
     outputPath = options.folder .. "/" .. options.filename .. "." .. options.format
   else
     local prefix = os.tmpname()
-    inputPath =  prefix .. "_" .. counter .. ".txt"
     outputPath = prefix .. "_" .. counter .. "." .. options.format
   end
 
-  local tmpFile = io.open(inputPath, "w")
-  if tmpFile == nil then
-    print("Error: Could not open file for writing")
-    return nil
-  end
-  tmpFile:write(cb.text)
-  tmpFile:close()
-
   -- Generate diagram using `d2` CLI utility
-  os.execute(
-    "d2" ..
-    " --theme=" .. options.theme ..
-    " --layout=" .. options.layout ..
-    " --sketch=" .. tostring(options.sketch) .. 
-    " --pad=" .. options.pad ..
-    " " .. inputPath .. 
-    " " .. outputPath
-  )
-
-  -- Remove the temp file
-  os.remove(inputPath)
+  local result = pandoc.system.with_temporary_directory('svg-convert', function (tmpdir)     
+    local tempPath = pandoc.path.join({tmpdir, "temp_" .. counter .. ".txt"})
+    
+    local tmpFile = io.open(tempPath, "w")
+    if tmpFile == nil then
+      print("Error: Could not open file for writing")
+      return nil
+    end
+    tmpFile:write(cb.text)
+    tmpFile:close()
+    
+    os.execute(
+      "d2" ..
+      " --theme=" .. options.theme ..
+      " --layout=" .. options.layout ..
+      " --sketch=" .. tostring(options.sketch) .. 
+      " --pad=" .. options.pad ..
+      " " .. tempPath .. 
+      " " .. outputPath
+    )
+    
+    return outputPath
+  end)
 
   -- Read the generated output if need be
   if options.folder == nil then
-    local file = io.open(outputPath, "rb")
+    local file = io.open(result, "rb")
     if file then
       data = file:read('*all')
       file:close()
     end
-    os.remove(outputPath)  -- Remove the output file since it'll be inline
+    os.remove(result)  -- Remove the output file since it'll be inline
     
     if options.format == "svg" then
       imageData = "data:image/svg+xml;base64," .. quarto.base64.encode(data)
     elseif options.format == "pdf" then
-      imageData = outputPath
+      imageData = result
     else
       imageData = "data:image/png;base64," .. quarto.base64.encode(data)
     end
   else
-    imageData = outputPath
+    imageData = result
   end
 
   -- Read the generated output into a Pandoc Image element
