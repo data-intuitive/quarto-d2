@@ -1,19 +1,21 @@
 # D2 Extension For Quarto
 
-The [Quarto](https://quarto.org) extension that allows you to generate
+This [Quarto](https://quarto.org) extension allows you to render
 [D2](https://d2lang.com) diagrams directly within your markdown
-documents. You can specify various attributes to control the appearance
-and layout of the diagrams.
+documents. You can specify various attributes or global settings to
+control the appearance and layout of the diagrams. This extension was
+inspired by [`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
 
-This extension draws inspiration from
-[`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
+## Installation
 
-## Installing
+### Prerequisites
 
-Before you can use this extension, you’ll need to make sure you’ve
-installed the d2 CLI utility.
+Ensure that you have [D2](https://d2lang.com/tour/install) installed on
+your system.
 
-Next, use the `quarto add` command to install the extension:
+### Install
+
+Run the following command to add this extension to your current project:
 
 ``` bash
 quarto add data-intuitive/quarto-d2
@@ -21,6 +23,61 @@ quarto add data-intuitive/quarto-d2
 
 This will install the extension under the `_extensions` subdirectory. If
 you’re using version control, you will want to check in this directory.
+
+## Example
+
+<div>
+
+``` d2
+logs: {
+  shape: page
+  style.multiple: true
+}
+user: User {shape: person}
+network: Network {
+  tower: Cell Tower {
+    satellites: {
+      shape: stored_data
+      style.multiple: true
+    }
+
+    satellites -> transmitter
+    satellites -> transmitter
+    satellites -> transmitter
+    transmitter
+  }
+  processor: Data Processor {
+    storage: Storage {
+      shape: cylinder
+      style.multiple: true
+    }
+  }
+  portal: Online Portal {
+    UI
+  }
+
+  tower.transmitter -> processor: phone logs
+}
+server: API Server
+
+user -> network.tower: Make call
+network.processor -> server
+network.processor -> server
+network.processor -> server
+
+server -> logs
+server -> logs
+server -> logs: persist
+
+server -> network.portal.UI: display
+user -> network.portal.UI: access {
+  style.stroke-dash: 3
+}
+```
+
+<img src="./images/diagram-1.svg" style="width:50.0%" />
+
+</div>
 
 ## Usage
 
@@ -87,8 +144,8 @@ x -> y -> z
 
 ## Global Options
 
-You can set global options for the d2 filter using the `d2` option in
-the document metadata. Here’s an example:
+You can set global options for the d2 filter using the `d2` field in the
+document metadata. Here’s an example:
 
 ```` markdown
 ---
@@ -96,13 +153,11 @@ title: "D2 Example"
 filters:
   - d2
 d2:
-  theme: "CoolClassics"
-  layout: "elk"
-  sketch: true
-  pad: 20
+  layout: elk
+  theme: "GrapeSoda"
 ---
 
-```{.d2}
+```{.d2 width="40%" echo=true}
 x -> y -> z
 ```
 ````
@@ -125,60 +180,5 @@ x -> y -> z
 >
 > If the `folder` attribute is not provided and the output format is
 > HTML, the image will be embedded inline in the document.
-
-</div>
-
-## Example
-
-<div>
-
-``` d2
-logs: {
-  shape: page
-  style.multiple: true
-}
-user: User {shape: person}
-network: Network {
-  tower: Cell Tower {
-    satellites: {
-      shape: stored_data
-      style.multiple: true
-    }
-
-    satellites -> transmitter
-    satellites -> transmitter
-    satellites -> transmitter
-    transmitter
-  }
-  processor: Data Processor {
-    storage: Storage {
-      shape: cylinder
-      style.multiple: true
-    }
-  }
-  portal: Online Portal {
-    UI
-  }
-
-  tower.transmitter -> processor: phone logs
-}
-server: API Server
-
-user -> network.tower: Make call
-network.processor -> server
-network.processor -> server
-network.processor -> server
-
-server -> logs
-server -> logs
-server -> logs: persist
-
-server -> network.portal.UI: display
-user -> network.portal.UI: access {
-  style.stroke-dash: 3
-}
-```
-
-<img src="./images/diagram-1.svg" style="width:50.0%" />
 
 </div>

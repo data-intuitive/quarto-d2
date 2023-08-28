@@ -2,8 +2,11 @@
 title: "D2 Example"
 filters:
   - d2
+d2:
+  layout: elk
+  theme: "GrapeSoda"
 ---
 
-```{.d2}
-x -> y
+```{.d2 width="40%" echo=true}
+x -> y -> z
 ```
