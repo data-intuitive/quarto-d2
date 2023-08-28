@@ -3,11 +3,14 @@ title: D2 Extension For Quarto
 format: gfm
 filters:
   - d2
+d2:
+  layout: "elk"
 ---
 
 The [Quarto](https://quarto.org) extension that allows you to generate [D2](https://d2lang.com) diagrams directly within your markdown documents. You can specify various attributes to control the appearance and layout of the diagrams. 
 
 This extension draws inspiration from [`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
+
 
 ## Installing
 
@@ -47,19 +50,22 @@ That's it! Now you know how to use the `d2` filter to generate diagrams in your 
 
 You can specify additional attributes to control the appearance and layout of the diagram.
 
-- `theme`: Specifies the theme of the diagram. Default is `NeutralDefault`. Options are `NeutralDefault`, `NeutralGrey`, `FlagshipTerrastruct`, `CoolClassics`, `MixedBerryBlue`, `GrapeSoda`, `Aubergine`, `ColorblindClear`, `VanillaNitroCola`, `ShirelyTemple`, `EarthTones`, `EvergladeGreen`, `ButteredToast`, `DarkMauve`, `Terminal`, `TerminalGrayscale`, `Origami`.
-- `layout`: Specifies the layout algorithm to use. Default is `elk`. Options are `dagre`, `elk`, `tala`.
-- `format`: Specifies the format of the output image. Default is `svg`. Option are `svg`, `png`, `pdf`.
+- `theme`: Specifies the theme of the diagram. Default is `"NeutralDefault"`. Options are `"NeutralDefault"`, `"NeutralGrey"`, `"FlagshipTerrastruc"t`, `"CoolClassics"`, `"MixedBerryBlue"`, `"GrapeSoda"`, `"Aubergine"`, `"ColorblindClear"`, `"VanillaNitroCola"`, `"ShirelyTemple"`, `"EarthTones"`, `"EvergladeGreen"`, `"ButteredToast"`, `"DarkMauve"`, `"Terminal"`, `"TerminalGrayscale"`, `"Origami"`.
+- `layout`: Specifies the layout algorithm to use. Default is `"elk"`. Options are `"dagre"`, `"elk"`, `"tala"`.
+- `format`: Specifies the format of the output image. Default is `svg`. Option are `"svg"`, `"png"`, `"pdf"`.
 - `sketch`: Whether to use a "sketch" style for the diagram. Default is `false`.
 - `pad`: Amount of padding around the diagram. Default is `100`.
 - `caption`: Caption to add to the diagram.
 - `folder`: Folder where the generated diagram will be saved. If not provided, the image will be embedded inline in the document (HTML only).
 - `filename`: Name of the output file.
+- `width`: Width of the output image. Default is `100%`. Examples are `"100px"`, `"50%"`, `"3cm"`.
+- `height`: Height of the output image. Default is `auto`. Examples are `"100px"`, `"50%"`, `"3cm"`.
+- `echo`: Whether to echo the original diagram code in the output. Default is `false`.
 
 Here's an example that uses multiple attributes:
 
 ````markdown
-```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption"}
+```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption" width="50%"}
 x -> y -> z
 ```
 ````
@@ -103,56 +109,8 @@ If the `folder` attribute is not provided and the output format is HTML, the ima
 
 ## Example
 
-````markdown
-```{.d2}
-logs: {
-  shape: page
-  style.multiple: true
-}
-user: User {shape: person}
-network: Network {
-  tower: Cell Tower {
-    satellites: {
-      shape: stored_data
-      style.multiple: true
-    }
 
-    satellites -> transmitter
-    satellites -> transmitter
-    satellites -> transmitter
-    transmitter
-  }
-  processor: Data Processor {
-    storage: Storage {
-      shape: cylinder
-      style.multiple: true
-    }
-  }
-  portal: Online Portal {
-    UI
-  }
-
-  tower.transmitter -> processor: phone logs
-}
-server: API Server
-
-user -> network.tower: Make call
-network.processor -> server
-network.processor -> server
-network.processor -> server
-
-server -> logs
-server -> logs
-server -> logs: persist
-
-server -> network.portal.UI: display
-user -> network.portal.UI: access {
-  style.stroke-dash: 3
-}
-```
-````
-
-```{.d2}
+```{.d2 width="50%" echo="true"}
 logs: {
   shape: page
   style.multiple: true

@@ -33,8 +33,7 @@ local D2Format = {
     pdf = 'pdf'
 }
 
-
-
+-- Helper function to copy a table
 function copyTable(obj, seen)
   -- Handle non-tables and previously-seen tables.
   if type(obj) ~= 'table' then return obj end
@@ -48,7 +47,7 @@ function copyTable(obj, seen)
   return setmetatable(res, getmetatable(obj))
 end
 
-
+-- Helper function for debugging
 function dump(o)
   if type(o) == 'table' then
      local s = '{ '
@@ -99,7 +98,9 @@ local function render_graph(globalOptions)
       if options.pad ~= nil and type(options.pad) == "string" then
         options.pad = tonumber(options.pad)
       end
-      print("Codeblock! 4")
+      if options.echo ~= nil and type(options.echo) == "string" then
+        options.echo = options.echo == "true"
+      end
 
       -- Set default filename
       if options.filename == nil then
@@ -173,44 +174,56 @@ local function render_graph(globalOptions)
       -- Read the generated output into a Pandoc Image element
       local img = pandoc.Image({}, imageData)
 
+
+      -- Set the width and height attributes, if they exist
+      if options.width ~= nil then
+        img.attributes.width = options.width
+      end
+
+      if options.height ~= nil then
+        img.attributes.height = options.height
+      end
+
       if options.caption ~= '' then
         img.caption = pandoc.Str(options.caption)
       end
 
       -- Wrap the Image element in a Para element and return it
-      return pandoc.Para({img})
+      local output = pandoc.Para({img})
+      if options.echo then
+        local codeBlock = pandoc.CodeBlock(cb.text, cb.attr)
+        output = pandoc.Div({codeBlock, output})
+      end
+      return output
     end
   }
   return filter
 end
 
 
-print("Foo")
 function Pandoc(doc)
 
   local options = {
     theme = D2Theme.NeutralDefault,
-    layout = D2Layout.elk,
+    layout = D2Layout.dagre,
     format = D2Format.svg,
     sketch = false,
     pad = 100,
     folder = nil,
     filename = nil,
-    caption = ''
+    caption = '',
+    width = nil,
+    height = nil,
+    echo = false
   }
 
   -- Process global attributes
   local globalOptions = doc.meta["d2"]
-  if globalOptions ~= nil then
-    local globalAttributeNames = {"theme", "layout", "format", "sketch", "pad", "folder"}
-    for _, attr in ipairs(globalAttributeNames) do
-      if globalOptions[attr] ~= nil then
-        options[attr] = pandoc.utils.stringify(globalOptions[attr])
-      end
+  if type(globalOptions) == "table" then
+    for k, v in pairs(globalOptions) do
+      options[k] = pandoc.utils.stringify(v)
     end
   end
-
-  dump(options)
 
   return doc:walk(render_graph(options))
 end

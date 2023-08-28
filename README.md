@@ -52,15 +52,16 @@ You can specify additional attributes to control the appearance and
 layout of the diagram.
 
 - `theme`: Specifies the theme of the diagram. Default is
-  `NeutralDefault`. Options are `NeutralDefault`, `NeutralGrey`,
-  `FlagshipTerrastruct`, `CoolClassics`, `MixedBerryBlue`, `GrapeSoda`,
-  `Aubergine`, `ColorblindClear`, `VanillaNitroCola`, `ShirelyTemple`,
-  `EarthTones`, `EvergladeGreen`, `ButteredToast`, `DarkMauve`,
-  `Terminal`, `TerminalGrayscale`, `Origami`.
-- `layout`: Specifies the layout algorithm to use. Default is `elk`.
-  Options are `dagre`, `elk`, `tala`.
+  `"NeutralDefault"`. Options are `"NeutralDefault"`, `"NeutralGrey"`,
+  `"FlagshipTerrastruc"t`, `"CoolClassics"`, `"MixedBerryBlue"`,
+  `"GrapeSoda"`, `"Aubergine"`, `"ColorblindClear"`,
+  `"VanillaNitroCola"`, `"ShirelyTemple"`, `"EarthTones"`,
+  `"EvergladeGreen"`, `"ButteredToast"`, `"DarkMauve"`, `"Terminal"`,
+  `"TerminalGrayscale"`, `"Origami"`.
+- `layout`: Specifies the layout algorithm to use. Default is `"elk"`.
+  Options are `"dagre"`, `"elk"`, `"tala"`.
 - `format`: Specifies the format of the output image. Default is `svg`.
-  Option are `svg`, `png`, `pdf`.
+  Option are `"svg"`, `"png"`, `"pdf"`.
 - `sketch`: Whether to use a “sketch” style for the diagram. Default is
   `false`.
 - `pad`: Amount of padding around the diagram. Default is `100`.
@@ -69,11 +70,17 @@ layout of the diagram.
   provided, the image will be embedded inline in the document (HTML
   only).
 - `filename`: Name of the output file.
+- `width`: Width of the output image. Default is `100%`. Examples are
+  `"100px"`, `"50%"`, `"3cm"`.
+- `height`: Height of the output image. Default is `auto`. Examples are
+  `"100px"`, `"50%"`, `"3cm"`.
+- `echo`: Whether to echo the original diagram code in the output.
+  Default is `false`.
 
 Here’s an example that uses multiple attributes:
 
 ```` markdown
-```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption"}
+```{.d2 theme="CoolClassics" layout="elk" pad=20 caption="This is a caption" width="50%"}
 x -> y -> z
 ```
 ````
@@ -123,8 +130,9 @@ x -> y -> z
 
 ## Example
 
-```` markdown
-```{.d2}
+<div>
+
+``` d2
 logs: {
   shape: page
   style.multiple: true
@@ -170,6 +178,7 @@ user -> network.portal.UI: access {
   style.stroke-dash: 3
 }
 ```
-````
 
-![](./images/diagram-1.svg)
+<img src="./images/diagram-1.svg" style="width:50.0%" />
+
+</div>
