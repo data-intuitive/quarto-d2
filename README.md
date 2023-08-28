@@ -143,6 +143,9 @@ layout of the diagram.
   `"100px"`, `"50%"`, `"3cm"`.
 - `echo`: Whether to echo the original diagram code in the output.
   Default is `false`.
+- `embed_mode`: How to embed the diagram in the output. Default is
+  `"inline"` for HTML output and `"link"` for other output formats.
+  Options are `"inline"`, `"link"`, `"raw"`.
 
 Here’s an example that uses multiple attributes:
 
@@ -172,7 +175,7 @@ x -> y -> z
 ```
 ````
 
-## Setting Output Folder and File Name
+## Setting output folder and file name
 
 You can specify a folder where the generated diagram will be saved using
 the `folder` attribute. The `filename` attribute allows you to set a
@@ -192,3 +195,31 @@ x -> y -> z
 > HTML, the image will be embedded inline in the document.
 
 </div>
+
+## Interactive diagrams
+
+Interactive diagrams will only work when the Quarto output format is
+HTML, the figure format is `"svg"`, and the embed mode is `"raw"`.
+Example:
+
+```` markdown
+---
+title: "D2 Example"
+format: html
+filters:
+  - d2
+d2:
+  format: svg
+  embed_mode: raw
+---
+
+```{.d2 width="40%"}
+x { 
+  link: "https://quarto.org"
+}
+y {
+  tooltip: "This is a tooltip"
+}
+x -> y -> z
+```
+````
