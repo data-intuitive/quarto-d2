@@ -52,11 +52,20 @@ function CodeBlock (cb)
     layout = D2Layout.dagre,
     format = D2Format.svg,
     sketch = false,
-    pad = 100,
+    pad = 0,
     folder = nil,
     filename = "diagram-" .. counter,
     caption = ''
   }
+
+  if not quarto.doc.is_format("html") then
+    -- Set the default folder to ./images since inline images are not supported
+    options.folder = "./images"
+  end
+  if quarto.doc.is_format("latex") then
+    -- Set the default format to pdf since svg is not supported
+    options.format = D2Format.pdf
+  end
 
   -- Process attributes
   for k, v in pairs(cb.attributes) do
