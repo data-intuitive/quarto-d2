@@ -2,7 +2,7 @@
 
 ## NEW FUNCTIONALITY
 
-- When the output type is html and the image format is svg, also setting the `embed_type="raw"` will embed the svg directly into the html document. This is useful enabling interactive content such as hover or links to work.
+- When the output type is html and the image format is svg, also setting the `embed_type="raw"` will embed the svg directly into the html document (#1). This is useful enabling interactive content such as hover or links to work.
 
 
 # quarto-d2 1.0.0
