@@ -143,6 +143,9 @@ layout of the diagram.
   `"100px"`, `"50%"`, `"3cm"`.
 - `echo`: Whether to echo the original diagram code in the output.
   Default is `false`.
+- `embed_mode`: How to embed the diagram in the output. Default is
+  `"inline"` for HTML output and `"link"` for other output formats.
+  Options are `"inline"`, `"link"`, `"raw"`.
 
 Here’s an example that uses multiple attributes:
 
