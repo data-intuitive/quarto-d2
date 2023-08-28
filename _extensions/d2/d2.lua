@@ -49,7 +49,7 @@ function CodeBlock (cb)
     layout = D2Layout.dagre,
     format = D2Format.svg,
     sketch = false,
-    pad = 0,
+    pad = 100,
     folder = nil,
     filename = "diagram-" .. counter,
     caption = ''
@@ -118,7 +118,7 @@ function CodeBlock (cb)
       " " .. tempPath .. 
       " " .. outputPath
     )
-    
+
     return outputPath
   end)
 
