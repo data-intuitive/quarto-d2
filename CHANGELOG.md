@@ -1,3 +1,10 @@
+# quarto-d2 1.2.0
+
+## NEW FUNCTIONALITY
+
+- Allow using the filter as a simple pandoc filter. This allows using the filter with other
+  document formats such as Rmarkdown.
+
 # quarto-d2 1.1.0
 
 ## NEW FUNCTIONALITY
