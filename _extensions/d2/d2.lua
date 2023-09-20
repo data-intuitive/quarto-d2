@@ -1,3 +1,6 @@
+-- The filter uses walk, which was added in Pandoc 2.17
+PANDOC_VERSION:must_be_at_least '2.17'
+
 -- Enum for D2Theme
 local D2Theme = {
   NeutralDefault = 0,
@@ -196,6 +199,9 @@ local function render_graph(globalOptions)
               print("Error: Unsupported format")
               return nil
             end
+          else
+            print("Error: Unsupported embed_mode")
+            return nil
           end
         end
       end)

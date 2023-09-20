@@ -16,24 +16,6 @@ Main features:
 This extension was inspired by
 [`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
 
-## Installation
-
-### Prerequisites
-
-Ensure that you have [D2](https://d2lang.com/tour/install) installed on
-your system.
-
-### Install
-
-Run the following command to add this extension to your current project:
-
-``` bash
-quarto add data-intuitive/quarto-d2
-```
-
-This will install the extension under the `_extensions` subdirectory. If
-you’re using version control, you will want to check in this directory.
-
 ## Example
 
 <div>
@@ -89,11 +71,39 @@ user -> network.portal.UI: access {
 
 </div>
 
+## Prerequisites
+
+Ensure that you have [D2](https://d2lang.com/tour/install) installed on
+your system.
+
 ## Usage
 
-To use the d2 filter, add the d2 filter to your quarto document. Next,
-add the `.d2` class to any code blocks containing D2 diagram code. Here
-is a basic example:
+The filter allows rendering D2 diagrams directly within your markdown
+documents.
+
+### Plain pandoc
+
+If you are using plain pandoc, you can use the `d2` filter by specifying
+it on the command line:
+
+``` bash
+pandoc --lua-filter d2.lua ...
+```
+
+### Quarto
+
+Install this filter as an extension with:
+
+``` bash
+quarto add data-intuitive/quarto-d2
+```
+
+This will install the extension under the `_extensions` subdirectory. If
+you’re using version control, you will want to check in this directory.
+
+By adding d2 to the list of filters in the YAML headers, you can use the
+`.d2` code block to render D2 diagrams directly within your markdown
+documents.
 
 ```` markdown
 ---
@@ -107,11 +117,17 @@ x -> y
 ```
 ````
 
-With this setup, the `d2` filter will process any code blocks with the
-`.d2` class, applying the attributes you specify.
+### RMarkdown
 
-That’s it! Now you know how to use the `d2` filter to generate diagrams
-in your quarto documents.
+Use `pandoc_args` to add the `d2` filter.
+
+``` yaml
+---
+output:
+  html_document:
+    pandoc_args: ['--lua-filter=d2.lua']
+---
+```
 
 ## Attributes
 
@@ -223,3 +239,8 @@ y {
 x -> y -> z
 ```
 ````
+
+## License
+
+This extension is distributed under the GPL-3 license, see file
+[`LICENSE`](LICENSE) for details.
