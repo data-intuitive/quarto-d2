@@ -17,7 +17,9 @@ local D2Theme = {
   DarkMauve = 200,
   Terminal = 300,
   TerminalGrayscale = 301,
-  Origami = 302
+  Origami = 302,
+  DarkMauve = 200,
+  DarkFlagshipTerrastruct = 201
 }
 
 -- Enum for D2Layout
@@ -127,6 +129,10 @@ local function render_graph(globalOptions)
       -- Set the default format to pdf since svg is not supported in PDF output
       if options.format == D2Format.svg and quarto.doc.is_format("latex") then
         options.format = D2Format.pdf
+      end
+      -- Set the default format to svg since pdf is not supported in Typst output
+      if options.format == D2Format.pdf and quarto.doc.is_format("typst") then
+        options.format = D2Format.svg
       end
       -- Set the default embed_mode to link if the quarto format is not html or the figure format is pdf
       if not quarto.doc.is_format("html") or options.format == D2Format.pdf then
