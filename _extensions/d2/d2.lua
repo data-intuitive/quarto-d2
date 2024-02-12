@@ -15,11 +15,10 @@ local D2Theme = {
   EvergladeGreen = 104,
   ButteredToast = 105,
   DarkMauve = 200,
+  DarkFlagshipTerrastruct = 201,
   Terminal = 300,
   TerminalGrayscale = 301,
-  Origami = 302,
-  DarkMauve = 200,
-  DarkFlagshipTerrastruct = 201
+  Origami = 302
 }
 
 -- Enum for D2Layout
