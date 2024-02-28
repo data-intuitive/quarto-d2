@@ -68,6 +68,10 @@ function dump(o)
   end
 end
 
+-- Helper for non empty string
+function is_nonempty_string(x)
+  return x ~= nil and type(x) == "string"
+end
 
 -- Counter for the diagram files
 local counter = 0
@@ -76,7 +80,9 @@ local function render_graph(globalOptions)
   local filter = {
     CodeBlock = function(cb)
       -- Check if the CodeBlock has the 'd2' class
-      if not cb.classes:includes('d2') or cb.text == nil then
+      is_d2_cb = cb.classes:includes('d2') or cb.attributes.classes:includes("d2")
+      --  
+      if not is_d2_cb then
         return nil
       end
 
@@ -91,27 +97,28 @@ local function render_graph(globalOptions)
       end
 
       -- Transform options
-      if options.theme ~= nil and type(options.theme) == "string" then
+      if is_nonempty_string(options.theme) then
         assert(D2Theme[options.theme] ~= nil, "Invalid theme: " .. options.theme .. ". Options are: " .. dump(D2Theme))
         options.theme = D2Theme[options.theme]
       end
-      if options.layout ~= nil and type(options.layout) == "string" then
+      if is_nonempty_string(options.layout) then
+        options.layout = string.lower(options.layout)
         assert(D2Layout[options.layout] ~= nil, "Invalid layout: " .. options.layout .. ". Options are: " .. dump(D2Layout))
         options.layout = D2Layout[options.layout]
       end
-      if options.format ~= nil and type(options.format) == "string" then
+      if is_nonempty_string(options.format) then
         assert(D2Format[options.format] ~= nil, "Invalid format: " .. options.format .. ". Options are: " .. dump(D2Format))
         options.format = D2Format[options.format]
       end
-      if options.embed_mode ~= nil and type(options.embed_mode) == "string" then
+      if is_nonempty_string(options.embed_mode) then
         assert(EmbedMode[options.embed_mode] ~= nil, "Invalid embed_mode: " .. options.embed_mode .. ". Options are: " .. dump(EmbedMode))
         options.embed_mode = EmbedMode[options.embed_mode]
       end
-      if options.sketch ~= nil and type(options.sketch) == "string" then
+      if is_nonempty_string(options.sketch) then
         assert(options.sketch == "true" or options.sketch == "false", "Invalid sketch: " .. options.sketch .. ". Options are: true, false")
         options.sketch = options.sketch == "true"
       end
-      if options.pad ~= nil and type(options.pad) == "string" then
+      if is_nonempty_string(options.pad)  then
         assert(tonumber(options.pad) ~= nil, "Invalid pad: " .. options.pad .. ". Must be a number")
         options.pad = tonumber(options.pad)
       end
@@ -122,7 +129,7 @@ local function render_graph(globalOptions)
 
       -- Set default filename
       if options.filename == nil then
-        options.filename = "diagram-" .. counter
+        options.filename = "diagram-" .. counter .. math.random (1, 1000)
       end
 
       -- Set the default format to pdf since svg is not supported in PDF output
@@ -146,7 +153,7 @@ local function render_graph(globalOptions)
       -- Generate diagram using `d2` CLI utility
       local result = pandoc.system.with_temporary_directory('svg-convert', function (tmpdir)
         -- determine path name of input file
-        local inputPath = pandoc.path.join({tmpdir, "temp_" .. counter .. ".txt"})
+        local inputPath = pandoc.path.join({tmpdir, "temp_" .. counter .. ".d2"})
 
         -- determine path name of output file
         local outputPath
