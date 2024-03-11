@@ -169,9 +169,9 @@ local function render_graph(globalOptions)
       end
 
       -- Generate diagram using `d2` CLI utility
-      local result = pandoc.system.with_temporary_directory('svg-convert', function (tmpdir)
+      local result = pandoc.system.with_temporary_directory('d2-render', function (tmpdir)
         -- determine path name of input file
-        local inputPath = pandoc.path.join({tmpdir, "temp_" .. counter .. ".d2"})
+        local inputPath = pandoc.path.join({tmpdir, "diagram-" .. counter .. ".d2"})
 
         -- write graph text to file
         local tmpFile = io.open(inputPath, "w")
@@ -230,7 +230,6 @@ local function render_graph(globalOptions)
         end
         
         if options.embed_mode == EmbedMode.link then
-          
           pandoc.mediabag.insert(outputFilename, mt, data)
           return outputFilename
         elseif options.embed_mode == EmbedMode.raw then
