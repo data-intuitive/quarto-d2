@@ -33,6 +33,7 @@ local D2Format = {
   png = 'png',
   pdf = 'pdf'
 }
+
 -- Enum for Embed mode
 local EmbedMode = {
   inline = "inline",
@@ -76,13 +77,77 @@ end
 -- Counter for the diagram files
 local counter = 0
 
+-- Transform and validate options
+function setPreD2RenderOptions(options)
+  if is_nonempty_string(options.theme) then
+    assert(D2Theme[options.theme] ~= nil,
+      "Invalid theme: " .. options.theme .. ". Options are: " .. dump(D2Theme))
+    options.theme = D2Theme[options.theme]
+  end
+  if is_nonempty_string(options.layout) then
+    assert(D2Layout[string.lower(options.layout)] ~= nil,
+      "Invalid layout: " .. options.layout .. ". Options are: " .. dump(D2Layout))
+    options.layout = D2Layout[string.lower(options.layout)]
+  end
+  if is_nonempty_string(options.format) then
+    assert(D2Format[options.format] ~= nil,
+      "Invalid format: " .. options.format .. ". Options are: " .. dump(D2Format))
+    options.format = D2Format[options.format]
+  end
+  if is_nonempty_string(options.embed_mode) then
+    assert(EmbedMode[options.embed_mode] ~= nil,
+      "Invalid embed_mode: " .. options.embed_mode .. ". Options are: " .. dump(EmbedMode))
+    options.embed_mode = EmbedMode[options.embed_mode]
+  end
+  if is_nonempty_string(options.sketch) then
+    assert(options.sketch == "true" or options.sketch == "false",
+      "Invalid sketch: " .. options.sketch .. ". Options are: true, false")
+    options.sketch = tostring(options.sketch == "true")
+  end
+  if is_nonempty_string(options.pad) then
+    assert(tonumber(options.pad) ~= nil,
+      "Invalid pad: " .. options.pad .. ". Must be a number")
+    options.pad = tonumber(options.pad)
+  end
+  if is_nonempty_string(options.echo) then
+    assert(options.echo == "true" or options.echo == "false",
+      "Invalid echo: " .. options.echo .. ". Options are: true, false")
+    options.echo = options.echo == "true"
+  end
+
+  -- Set default filename
+  if not is_nonempty_string(options.filename) then
+    options.filename = "diagram-" .. counter
+  end
+  
+  options = setD2RenderFormat(options)
+
+  return options
+end
+
+-- Set options for format
+function setD2RenderFormat(options)
+  -- Set the default format to pdf since svg is not supported in PDF output
+  if options.format == D2Format.svg and quarto.doc.is_format("latex") then
+    options.format = D2Format.pdf
+  end
+  -- Set the default format to svg since pdf is not supported in Typst output
+  if options.format == D2Format.pdf and quarto.doc.is_format("typst") then
+    options.format = D2Format.svg
+  end
+  -- Set the default embed_mode to link if the quarto format is not html or the figure format is pdf
+  if not quarto.doc.is_format("html") or options.format == D2Format.pdf then
+    options.embed_mode = EmbedMode.link
+  end
+  
+  return options
+end
+  
 local function render_graph(globalOptions)
   local filter = {
     CodeBlock = function(cb)
       -- Check if the CodeBlock has the 'd2' class
-      is_d2_cb = cb.classes:includes('d2') or cb.attributes.classes:includes("d2")
-      --  
-      if not is_d2_cb then
+      if not cb.classes[1] == "d2" then
         return nil
       end
 
@@ -95,56 +160,9 @@ local function render_graph(globalOptions)
       for k, v in pairs(cb.attributes) do
         options[k] = v
       end
-
-      -- Transform options
-      if is_nonempty_string(options.theme) then
-        assert(D2Theme[options.theme] ~= nil, "Invalid theme: " .. options.theme .. ". Options are: " .. dump(D2Theme))
-        options.theme = D2Theme[options.theme]
-      end
-      if is_nonempty_string(options.layout) then
-        options.layout = string.lower(options.layout)
-        assert(D2Layout[options.layout] ~= nil, "Invalid layout: " .. options.layout .. ". Options are: " .. dump(D2Layout))
-        options.layout = D2Layout[options.layout]
-      end
-      if is_nonempty_string(options.format) then
-        assert(D2Format[options.format] ~= nil, "Invalid format: " .. options.format .. ". Options are: " .. dump(D2Format))
-        options.format = D2Format[options.format]
-      end
-      if is_nonempty_string(options.embed_mode) then
-        assert(EmbedMode[options.embed_mode] ~= nil, "Invalid embed_mode: " .. options.embed_mode .. ". Options are: " .. dump(EmbedMode))
-        options.embed_mode = EmbedMode[options.embed_mode]
-      end
-      if is_nonempty_string(options.sketch) then
-        assert(options.sketch == "true" or options.sketch == "false", "Invalid sketch: " .. options.sketch .. ". Options are: true, false")
-        options.sketch = options.sketch == "true"
-      end
-      if is_nonempty_string(options.pad)  then
-        assert(tonumber(options.pad) ~= nil, "Invalid pad: " .. options.pad .. ". Must be a number")
-        options.pad = tonumber(options.pad)
-      end
-      if options.echo ~= nil and type(options.echo) == "string" then
-        assert(options.echo == "true" or options.echo == "false", "Invalid echo: " .. options.echo .. ". Options are: true, false")
-        options.echo = options.echo == "true"
-      end
-
-      -- Set default filename
-      if options.filename == nil then
-        options.filename = "diagram-" .. counter .. math.random (1, 1000)
-      end
-
-      -- Set the default format to pdf since svg is not supported in PDF output
-      if options.format == D2Format.svg and quarto.doc.is_format("latex") then
-        options.format = D2Format.pdf
-      end
-      -- Set the default format to svg since pdf is not supported in Typst output
-      if options.format == D2Format.pdf and quarto.doc.is_format("typst") then
-        options.format = D2Format.svg
-      end
-      -- Set the default embed_mode to link if the quarto format is not html or the figure format is pdf
-      if not quarto.doc.is_format("html") or options.format == D2Format.pdf then
-        options.embed_mode = EmbedMode.link
-      end
-
+      
+      options = setPreD2RenderOptions(options)
+      
       -- Set the default folder to ./images when embed_mode is link
       if options.folder == nil and options.embed_mode == EmbedMode.link then
         options.folder = "./images"
@@ -155,24 +173,35 @@ local function render_graph(globalOptions)
         -- determine path name of input file
         local inputPath = pandoc.path.join({tmpdir, "temp_" .. counter .. ".d2"})
 
-        -- determine path name of output file
-        local outputPath
-        if options.folder ~= nil then
-          os.execute("mkdir -p " .. options.folder)
-          outputPath = options.folder .. "/" .. options.filename .. "." .. options.format
-        else
-          outputPath = pandoc.path.join({tmpdir, options.filename .. "." .. options.format})
-        end
-
         -- write graph text to file
         local tmpFile = io.open(inputPath, "w")
         if tmpFile == nil then
           print("Error: Could not open file for writing")
           return nil
         end
-        tmpFile:write(cb.text)
-        tmpFile:close()
+          
+        local d2Text = cb.text
+        local d2mt
+  
+        if is_nonempty_string(options.file) then
+          -- FIXE: Add check for d2 or txt file extension
+          d2mt, d2Text = pandoc.mediabag.fetch(options.file)
+        end
         
+        tmpFile:write(d2Text)
+        tmpFile:close()
+          
+        -- determine path name of output file
+        local outputPath
+        local outputFilename = options.filename .. "." .. options.format
+        
+        if options.folder ~= nil then
+          os.execute("mkdir -p " .. options.folder)
+          outputPath = pandoc.path.join({options.folder, outputFilename})
+        else
+          outputPath = pandoc.path.join({tmpdir, outputFilename})
+        end
+
         -- run d2
         os.execute(
           "d2" ..
@@ -184,30 +213,36 @@ local function render_graph(globalOptions)
           " " .. outputPath
         )
 
+        local outputFile = io.open(outputPath, "rb")
+        local data
+        
+        if outputFile then
+          data = outputFile:read('*all')
+          outputFile:close()
+        end
+          
+        local mt = "application/pdf"
+        
+        if options.format == "svg" then
+          mt = "image/svg+xml"
+        elseif options.format == "png" then
+          mt = "image/png"
+        end
+        
         if options.embed_mode == EmbedMode.link then
-          return outputPath
-        else
-          local file = io.open(outputPath, "rb")
-          local data
-          if file then
-            data = file:read('*all')
-            file:close()
-          end
+          
+          pandoc.mediabag.insert(outputFilename, mt, data)
+          return outputFilename
+        elseif options.embed_mode == EmbedMode.raw then
           os.remove(outputPath)
-
-          if options.embed_mode == EmbedMode.raw then
-            return data
-          elseif options.embed_mode == EmbedMode.inline then
-            dump(options)
-            
-            if options.format == "svg" then
-              return "data:image/svg+xml;base64," .. quarto.base64.encode(data)
-            elseif options.format == "png" then
-              return "data:image/png;base64," .. quarto.base64.encode(data)
-            else
-              print("Error: Unsupported format")
-              return nil
-            end
+          return data
+        elseif options.embed_mode == EmbedMode.inline then
+          if not option.format == "pdf" then
+            os.remove(outputPath)
+            return "data:" .. mt .. ";base64," .. quarto.base64.encode(data)
+          else
+            print("Error: Unsupported format")
+            return nil
           end
         end
       end)
@@ -264,6 +299,7 @@ function Pandoc(doc)
     sketch = false,
     pad = 100,
     folder = nil,
+    file = nil,
     filename = nil,
     caption = '',
     width = nil,
