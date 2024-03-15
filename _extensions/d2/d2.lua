@@ -235,6 +235,10 @@ local function render_graph(globalOptions)
         end
         
         if options.embed_mode == EmbedMode.link then
+          if options.folder ~= nil then
+            return outputPath
+          end
+          
           pandoc.mediabag.insert(outputFilename, mt, data)
           return outputFilename
         elseif options.embed_mode == EmbedMode.raw then
