@@ -1,10 +1,10 @@
 # quarto-d2 (development)
 
 - Make SVG as the default diagram format when using the [Typst output format](https://quarto.org/docs/output-formats/typst.html).
-- Add support for reading d2 diagrams from external files using `file` parameter. Block text is ignored if file parameter is supplied.
+- Add support for reading d2 diagrams from external files using `file` parameter. Block text is replaced with file contents.
 - Add support for alternate code block syntax without curly braces.
 - Insert rendered diagrams into the Pandoc mediabag when `embed_type="link"`
-- Refactor to add helper functions `setPreD2RenderOptions`, `setD2RenderFormat`, and `is_nonempty_string`
+- Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`
 
 # quarto-d2 1.1.0
 
