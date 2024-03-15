@@ -245,7 +245,7 @@ local function render_graph(globalOptions)
           os.remove(outputPath)
           return data
         elseif options.embed_mode == EmbedMode.inline then
-          if not option.format == "pdf" then
+          if not options.format == "pdf" then
             os.remove(outputPath)
             return "data:" .. mimetype .. ";base64," .. quarto.base64.encode(data)
           else
