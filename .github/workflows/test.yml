@@ -10,6 +10,8 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true
 
       - name: Install D2 
         run: curl -fsSL https://d2lang.com/install.sh | sh -s --
@@ -17,6 +19,7 @@ jobs:
       - name: Render Quarto document
         run: |
           for file in $(find tests -name "*.qmd"); do
+            echo ">> Rendering $file"
             quarto render $file
           done
 
