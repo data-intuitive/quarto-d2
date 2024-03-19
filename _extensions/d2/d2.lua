@@ -109,7 +109,6 @@ function setPreD2RenderOptions(options)
   if is_nonempty_string(options.pad) then
     assert(tonumber(options.pad) ~= nil,
       "Invalid pad: " .. options.pad .. ". Must be a number")
-    options.pad = tonumber(options.pad)
   end
   if is_nonempty_string(options.echo) then
     assert(options.echo == "true" or options.echo == "false",
@@ -120,11 +119,18 @@ function setPreD2RenderOptions(options)
     assert(tonumber(options.animate_interval) > 0,
       "Invalid animate_interval: " .. options.animate_interval .. ". Must be greater than 0 for .gif outputs")
   end
+  -- Check file extension
+  if is_nonempty_string(options.file) then
+    local d2path,d2ext = pandoc.path.split_extension(options.file)
+    assert(d2ext == ".d2" or d2ext == ".txt",
+      "Invalid file: " .. options.file .. ". Must use a 'd2' or 'txt' file extension")
+  end
   
   -- Set default filename
   if not is_nonempty_string(options.filename) then
     options.filename = "diagram-" .. counter
   end
+  
   -- Set the default format to pdf since svg is not supported in PDF output
   if options.format == D2Format.svg and quarto.doc.is_format("latex") then
     options.format = D2Format.pdf
@@ -146,8 +152,7 @@ function setPreD2RenderOptions(options)
 end
   
 local function render_graph(globalOptions)
-  local filter = {
-    CodeBlock = function(cb)
+  local CodeBlock = function(cb)
       -- Check if the CodeBlock has the 'd2' class
       if not cb.classes:includes('d2') then
         return nil
@@ -182,8 +187,12 @@ local function render_graph(globalOptions)
         end
 
         if is_nonempty_string(options.file) then
-          -- FIXME: Add check for d2 or txt file extension
           local d2File = io.open(options.file)
+          if d2File == nil then
+            print("Error: Diagram file " .. options.file .. " can't be opened")
+            return nil
+          end
+
           local d2Text = d2File:read('*all')
           cb.text = d2Text
         end
@@ -209,7 +218,7 @@ local function render_graph(globalOptions)
           " --layout=" .. options.layout ..
           " --sketch=" .. tostring(options.sketch) .. 
           " --pad=" .. options.pad ..
-          " --animate-interval=" .. tostring(options.animate_interval) ..
+          " --animate-interval=" .. options.animate_interval ..
           " " .. inputPath .. 
           " " .. outputPath
         )
@@ -268,7 +277,10 @@ local function render_graph(globalOptions)
         end
         
       else
-        local image = pandoc.Image({}, result)
+        local image = pandoc.Image({
+          classes = cb.classes,
+          identifier = cb.identifier
+        }, result)
 
         -- Set the width and height attributes, if they exist
         if options.width ~= nil then
@@ -293,8 +305,15 @@ local function render_graph(globalOptions)
       end
       return output
     end
+    -- see https://github.com/quarto-dev/quarto-cli/discussions/8926#discussioncomment-8624950
+  local DecoratedCodeBlock = function(node)
+    return CodeBlock(node.code_block)
+  end
+  
+  return {
+    CodeBlock = CodeBlock,
+    DecoratedCodeBlock = DecoratedCodeBlock
   }
-  return filter
 end
 
 
