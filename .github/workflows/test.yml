@@ -16,7 +16,6 @@ jobs:
 
       - name: Render Quarto document
         run: |
-          cp -r _extensions tests
           for file in $(find tests -name "*.qmd"); do
             quarto render $file
           done
