@@ -121,7 +121,8 @@ layout of the diagram and document:
   Option are `"svg"`, `"png"`, `"pdf"`, `"gif"`.
 - `sketch`: Whether to use a “sketch” style for the diagram. Default is
   `false`.
-- `pad`: Amount of padding around the diagram. Default is `100`.
+- `pad`: Amount of padding around the diagram in pixels. Default is
+  `100`.
 - `caption`: Caption to add to the diagram.
 - `width`: Width of the output image. Default is `100%`. Examples are
   `"100px"`, `"50%"`, `"3cm"`.
@@ -130,9 +131,10 @@ layout of the diagram and document:
 - `echo`: Whether to echo the original diagram code in the output.
   Default is `false`.
 
-You can also replace the contents of the block with an external d2 file
-using the `file` parameter. Other parameters related to rendering and
-embedding diagrams include:
+You can also replace the contents of the block with an external D2 file
+by using the `file` parameter. `file` must be an existing file ending in
+a “d2” or “txt” file extension. Other parameters related to rendering
+and embedding diagrams include:
 
 - `folder`: Folder where the generated diagram will be saved. If not
   provided, the image will be embedded inline in the document (HTML
