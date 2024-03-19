@@ -1,0 +1,9 @@
+---
+title: "D2 Example"
+filters:
+  - d2
+---
+
+```{.d2}
+x -> y
+```

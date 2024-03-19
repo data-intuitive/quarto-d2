@@ -1,0 +1,28 @@
+name: Test D2 Quarto Extension
+
+on: [push]
+
+jobs:
+  test_extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Install D2 
+        run: curl -fsSL https://d2lang.com/install.sh | sh -s --
+
+      - name: Render Quarto document
+        run: |
+          cp -r _extensions tests
+          for file in $(find tests -name "*.qmd"); do
+            quarto render $file
+          done
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-output
+          path: tests
