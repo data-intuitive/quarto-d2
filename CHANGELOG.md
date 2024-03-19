@@ -1,5 +1,9 @@
 # quarto-d2 development
 
+## NEW FUNCTIONALITY
+
+* Added minimal CI testing using GitHub actions (#10).
+
 ## BUG FIXES
 
 * Added tala to the list of layouts (#9, thanks @tosaddler!).

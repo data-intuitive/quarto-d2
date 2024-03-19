@@ -1,0 +1,19 @@
+---
+title: "D2 Example"
+format: html
+filters:
+  - d2
+d2:
+  format: svg
+  embed_mode: raw
+---
+
+```{.d2 width="40%"}
+x { 
+  link: "https://quarto.org"
+}
+y {
+  tooltip: "This is a tooltip"
+}
+x -> y -> z
+```
