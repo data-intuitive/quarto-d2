@@ -2,7 +2,7 @@
 
 ## NEW FUNCTIONALITY
 
-* Added minimal CI testing using GitHub actions.
+* Added minimal CI testing using GitHub actions (#10).
 
 ## BUG FIXES
 
