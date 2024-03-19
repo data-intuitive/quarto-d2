@@ -24,7 +24,7 @@ local D2Theme = {
 local D2Layout = {
   dagre = 'dagre',
   elk = 'elk',
-  tala = 'tala
+  tala = 'tala'
 }
 
 -- Enum for D2Format

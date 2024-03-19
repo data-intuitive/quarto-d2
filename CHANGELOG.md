@@ -1,3 +1,9 @@
+# quarto-d2 development
+
+## BUG FIXES
+
+* Added tala to the list of layouts (#9, thanks @tosaddler!).
+
 # quarto-d2 1.1.0
 
 ## NEW FUNCTIONALITY
