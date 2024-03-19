@@ -1,17 +1,29 @@
-# quarto-d2 (development)
+# quarto-d2 development
 
-- Make SVG as the default diagram format when using the [Typst output format](https://quarto.org/docs/output-formats/typst.html).
-- Add support for reading d2 diagrams from external files using `file` parameter. Block text is replaced with file contents.
-- Add support for alternate code block syntax without curly braces.
-- Insert rendered diagrams into the Pandoc mediabag when `embed_type="link"`
-- Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`
+## NEW FUNCTIONALITY
+
+* Added minimal CI testing using GitHub actions (#10).
+
+Multiple new features added by @elipousson:
+
+* Make SVG as the default diagram format when using the [Typst output format](https://quarto.org/docs/output-formats/typst.html).
+* Add support for reading d2 diagrams from external files using `file` parameter. Block text is replaced with file contents.
+* Use Pandoc mediabag for rendered diagram images when `embed_type="link"`
+* Add support for alternate code block syntax without curly braces.
+
+## BUG FIXES
+
+* Added [TALA](https://d2lang.com/tour/tala/) to the list of layouts (#9, thanks @tosaddler!).
+
+## OTHER
+
+* Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`
 
 # quarto-d2 1.1.0
 
 ## NEW FUNCTIONALITY
 
 - When the output type is html and the image format is svg, also setting the `embed_type="raw"` will embed the svg directly into the html document (#1). This is useful enabling interactive content such as hover or links to work.
-
 
 # quarto-d2 1.0.0
 

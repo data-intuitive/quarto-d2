@@ -1,0 +1,87 @@
+---
+title: D2 Extension For Quarto
+format: pdf
+filters:
+  - d2
+d2:
+  layout: "elk"
+---
+
+This [Quarto](https://quarto.org) extension allows you to render [D2](https://d2lang.com) diagrams directly within your markdown documents. 
+
+Main features:
+
+- Render [D2](https://d2lang.com) diagrams directly within your [Quarto](https://quarto.org) markdown documents. 
+- Control the appearance and layout of your diagrams using global settings or code block attributes.
+- Tune the width and height of the resulting figures using the "width" and "height" arguments.
+
+This extension was inspired by [`ram02z/d2-filter`](https://github.com/ram02z/d2-filter).
+
+## Installation
+
+### Prerequisites
+
+Ensure that you have [D2](https://d2lang.com/tour/install) installed on your system.
+
+### Install
+
+Run the following command to add this extension to your current project:
+
+``` bash
+quarto add data-intuitive/quarto-d2
+```
+
+This will install the extension under the `_extensions` subdirectory.
+If you're using version control, you will want to check in this directory.
+
+
+
+## Example
+
+
+```{.d2 width="50%" echo="true"}
+logs: {
+  shape: page
+  style.multiple: true
+}
+user: User {shape: person}
+network: Network {
+  tower: Cell Tower {
+    satellites: {
+      shape: stored_data
+      style.multiple: true
+    }
+
+    satellites -> transmitter
+    satellites -> transmitter
+    satellites -> transmitter
+    transmitter
+  }
+  processor: Data Processor {
+    storage: Storage {
+      shape: cylinder
+      style.multiple: true
+    }
+  }
+  portal: Online Portal {
+    UI
+  }
+
+  tower.transmitter -> processor: phone logs
+}
+server: API Server
+
+user -> network.tower: Make call
+network.processor -> server
+network.processor -> server
+network.processor -> server
+
+server -> logs
+server -> logs
+server -> logs: persist
+
+server -> network.portal.UI: display
+user -> network.portal.UI: access {
+  style.stroke-dash: 3
+}
+```
