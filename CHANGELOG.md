@@ -4,20 +4,21 @@
 
 * Added minimal CI testing using GitHub actions (#10).
 
-Multiple new features added by @elipousson:
+* Make SVG as the default diagram format when using the [Typst output format](https://quarto.org/docs/output-formats/typst.html) (#7, @elipousson).
+  
+* Add support for reading d2 diagrams from external files using `file` parameter. Block text is replaced with file contents (#7, @elipousson).
+  
+* Use Pandoc mediabag for rendered diagram images when `embed_type="link"` (#7, @elipousson).
 
-* Make SVG as the default diagram format when using the [Typst output format](https://quarto.org/docs/output-formats/typst.html).
-* Add support for reading d2 diagrams from external files using `file` parameter. Block text is replaced with file contents.
-* Use Pandoc mediabag for rendered diagram images when `embed_type="link"`
-* Add support for alternate code block syntax without curly braces.
+* Add support for alternate code block syntax without curly braces (#7, @elipousson).
 
 ## BUG FIXES
 
-* Added [TALA](https://d2lang.com/tour/tala/) to the list of layouts (#9, thanks @tosaddler!).
+* Added [TALA](https://d2lang.com/tour/tala/) to the list of layouts (#9, @tosaddler).
 
 ## OTHER
 
-* Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`
+* Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`.
 
 # quarto-d2 1.1.0
 
