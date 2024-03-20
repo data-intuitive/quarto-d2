@@ -10,3 +10,7 @@ d2:
 ```{.d2 width="40%" echo=true}
 x -> y -> z
 ```
+
+```{.d2 file=test.d2 echo=true}
+x -> y -> z
+```
