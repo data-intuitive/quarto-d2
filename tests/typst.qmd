@@ -1,0 +1,20 @@
+---
+title: "D2 Example"
+format: typst
+filters:
+  - d2
+d2:
+  layout: elk
+  format: svg
+  theme: "GrapeSoda"
+---
+
+```{.d2 width="6in" echo=true}
+direction: right
+x -> y -> z
+```
+
+
+```{.d2 format=png width="3in" echo=true}
+a -> b
+```

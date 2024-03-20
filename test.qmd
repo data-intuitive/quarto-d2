@@ -1,11 +1,11 @@
 ---
 title: D2 Extension For Quarto
-format: gfm
+format: html
+eval: false
 filters:
   - d2
 d2:
   layout: "elk"
-  folder: "images"
 ---
 
 This [Quarto](https://quarto.org) extension allows you to render [D2](https://d2lang.com) diagrams directly within your markdown documents. 
@@ -97,11 +97,34 @@ user -> network.portal.UI: access {
 
 The enclosing curly brakets are optional if you are only using document level options. Quarto block-level options, e.g. `#|`, are not currently supported.
 
+
 ```d2
 Database -> S3: backup
 Database -> S3
 Database -> S3: backup
 ```
+
+
+## Usage
+
+To use the d2 filter, add the d2 filter to your quarto document. Next, add the `.d2` class to any code blocks containing D2 diagram code. Here is a basic example:
+
+
+````markdown
+---
+title: "D2 Example"
+filters:
+  - d2
+---
+
+```{.d2}
+x -> y
+```
+````
+
+With this setup, the `d2` filter will process any code blocks with the `.d2` class, applying the attributes you specify.
+
+That's it! Now you know how to use the `d2` filter to generate diagrams in your quarto documents.
 
 ## Attributes
 
@@ -109,15 +132,15 @@ You can specify additional attributes to control the appearance and layout of th
 
 - `theme`: Specifies the theme of the diagram. Default is `"NeutralDefault"`. Options are `"NeutralDefault"`, `"NeutralGrey"`, `"FlagshipTerrastruct"`, `"DarkFlagshipTerrastruct"`, `"CoolClassics"`, `"MixedBerryBlue"`, `"GrapeSoda"`, `"Aubergine"`, `"ColorblindClear"`, `"VanillaNitroCola"`, `"ShirelyTemple"`, `"EarthTones"`, `"EvergladeGreen"`, `"ButteredToast"`, `"DarkMauve"`, `"Terminal"`, `"TerminalGrayscale"`, and `"Origami"`.
 - `layout`: Specifies the layout algorithm to use. Default is `"elk"`. Options are `"dagre"`, `"elk"`, `"tala"`. layout is not case sensitive so `"ELK"` or `"TALA"` are also supported.
-- `format`: Specifies the format of the output image. Default is `svg`. Option are `"svg"`, `"png"`, `"pdf"`, `"gif"`.
+- `format`: Specifies the format of the output image. Default is `svg`. Option are `"svg"`, `"png"`, `"pdf"`.
 - `sketch`: Whether to use a "sketch" style for the diagram. Default is `false`.
-- `pad`: Amount of padding around the diagram in pixels. Default is `100`.
+- `pad`: Amount of padding around the diagram. Default is `100`.
 - `caption`: Caption to add to the diagram.
 - `width`: Width of the output image. Default is `100%`. Examples are `"100px"`, `"50%"`, `"3cm"`.
 - `height`: Height of the output image. Default is `auto`. Examples are `"100px"`, `"50%"`, `"3cm"`.
 - `echo`: Whether to echo the original diagram code in the output. Default is `false`.
 
-You can also replace the contents of the block with an external D2 file by using the `file` parameter. `file` must be an existing file ending in a "d2" or "txt" file extension. Other parameters related to rendering and embedding diagrams include: 
+You can also replace the contents of the block with an external d2 file using the `file` parameter. Other parameters related to rendering and embedding diagrams include: 
 
 - `folder`: Folder where the generated diagram will be saved. If not provided, the image will be embedded inline in the document (HTML only).
 - `filename`: Name of the output file.
@@ -149,15 +172,6 @@ d2:
 
 ```{.d2 width="40%" echo=true}
 x -> y -> z
-```
-````
-
-## Setting an input file
-
-You can specify an input d2 file. If `echo=true`, the contents of the file block is replaced by the contents of the file.
-
-````markdown
-```{.d2 file="./diagram.d2"}
 ```
 ````
 
