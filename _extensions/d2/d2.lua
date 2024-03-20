@@ -170,6 +170,11 @@ local function render_graph(globalOptions)
       
       options = setPreD2RenderOptions(options)
       
+      if options.echo then
+        cb.classes:insert('sourceCode')
+        cb.classes:insert('cell-code')
+      end
+      
       if options.file == nil and cb.text == nil then
         return nil
       end
@@ -195,6 +200,7 @@ local function render_graph(globalOptions)
 
           local d2Text = d2File:read('*all')
           cb.text = d2Text
+          cb.attributes.filename = pandoc.path.filename(options.file)
         end
         
         tmpFile:write(cb.text)
