@@ -168,9 +168,9 @@ function setD2outputPath(options, tmpdir)
   if options.folder ~= nil then
     os.execute("mkdir -p " .. options.folder)
     outputFolder = options.folder
-  elseif options.folder == nil and options.embed_mode == EmbedMode.link then
+  elseif quarto.project.output_directory ~= nil and options.embed_mode == EmbedMode.link then
     -- Set the default folder to project output directory when embed_mode is link
-    options.folder = quarto.project.output_directory
+    outputFolder = quarto.project.output_directory
   end
 
   -- Set default folder to resource_path
