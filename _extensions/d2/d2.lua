@@ -277,7 +277,7 @@ local function render_graph(globalOptions)
         elseif options.embed_mode == EmbedMode.raw then
           return data
         elseif options.embed_mode == EmbedMode.inline then
-          assert(d2File ~= nil,
+          assert(options.format ~= "pdf",
              "Error: pdf is an unsupported format for inline `embed_mode`")
           return "data:" .. mimetype .. ";base64," .. quarto.base64.encode(data)
         end
