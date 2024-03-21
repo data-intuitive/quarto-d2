@@ -168,17 +168,18 @@ local function render_graph(globalOptions)
         options[k] = v
       end
       
-      options = setPreD2RenderOptions(options)
-      
-      if options.echo then
-        cb.classes:insert('sourceCode')
-        cb.classes:insert('cell-code')
-      end
-      
       if options.file == nil and cb.text == nil then
         return nil
       end
+      
+      options = setPreD2RenderOptions(options)
 
+      -- add classes for code folding
+      if options.echo then
+        cb.classes:insert("sourceCode")
+        cb.classes:insert("cell-code")
+      end
+      
       -- Generate diagram using `d2` CLI utility
       local result = pandoc.system.with_temporary_directory('d2-render', function (tmpdir)
         -- determine path name of input file
@@ -254,7 +255,7 @@ local function render_graph(globalOptions)
             return outputPath
           end
           
-          pandoc.mediabag.insert(outputFilename, mt, data)
+          pandoc.mediabag.insert(outputFilename, mimetype, data)
           return outputFilename
         elseif options.embed_mode == EmbedMode.raw then
           os.remove(outputPath)
