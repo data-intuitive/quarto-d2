@@ -18,7 +18,7 @@
 
 ## OTHER
 
-* Refactor to add helper functions `setPreD2RenderOptions` and `is_nonempty_string`.
+* Refactor to add helper functions `setD2Options`, `setD2outputPath`, and `is_nonempty_string`.
 
 # quarto-d2 1.1.0
 
