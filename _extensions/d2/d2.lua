@@ -80,7 +80,9 @@ end
 local counter = 0
 
 -- Transform and validate options
-function setPreD2RenderOptions(options)
+function setD2Options(options)
+  
+  -- Check rendering options
   if is_nonempty_string(options.theme) then
     assert(D2Theme[options.theme] ~= nil,
       "Invalid theme: " .. options.theme .. ". Options are: " .. dump(D2Theme))
@@ -90,16 +92,6 @@ function setPreD2RenderOptions(options)
     assert(D2Layout[string.lower(options.layout)] ~= nil,
       "Invalid layout: " .. options.layout .. ". Options are: " .. dump(D2Layout))
     options.layout = D2Layout[string.lower(options.layout)]
-  end
-  if is_nonempty_string(options.format) then
-    assert(D2Format[options.format] ~= nil,
-      "Invalid format: " .. options.format .. ". Options are: " .. dump(D2Format))
-    options.format = D2Format[options.format]
-  end
-  if is_nonempty_string(options.embed_mode) then
-    assert(EmbedMode[options.embed_mode] ~= nil,
-      "Invalid embed_mode: " .. options.embed_mode .. ". Options are: " .. dump(EmbedMode))
-    options.embed_mode = EmbedMode[options.embed_mode]
   end
   if is_nonempty_string(options.sketch) then
     assert(options.sketch == "true" or options.sketch == "false",
@@ -126,11 +118,30 @@ function setPreD2RenderOptions(options)
       "Invalid file: " .. options.file .. ". Must use a 'd2' or 'txt' file extension")
   end
   
-  -- Set default filename
-  if not is_nonempty_string(options.filename) then
+  -- Set filename
+  if is_nonempty_string(options.filename) then
+    -- If filename option uses an extension, remove it
+    local fnamepath,fnameext = pandoc.path.split_extension(options.filename)
+    if is_nonempty_string(fnameext) then
+      options.filename = fnamepath
+    end
+  else
+    -- Set default filename
     options.filename = "diagram-" .. counter
   end
   
+  -- Check format and embed_mode options
+  if is_nonempty_string(options.format) then
+    assert(D2Format[options.format] ~= nil,
+      "Invalid format: " .. options.format .. ". Options are: " .. dump(D2Format))
+    options.format = D2Format[options.format]
+  end
+  if is_nonempty_string(options.embed_mode) then
+    assert(EmbedMode[options.embed_mode] ~= nil,
+      "Invalid embed_mode: " .. options.embed_mode .. ". Options are: " .. dump(EmbedMode))
+    options.embed_mode = EmbedMode[options.embed_mode]
+  end
+
   -- Set the default format to pdf since svg is not supported in PDF output
   if options.format == D2Format.svg and quarto.doc.is_format("latex") then
     options.format = D2Format.pdf
@@ -143,12 +154,27 @@ function setPreD2RenderOptions(options)
   if not quarto.doc.is_format("html") or options.format == D2Format.pdf then
     options.embed_mode = EmbedMode.link
   end
-  -- Set the default folder to project output directory when embed_mode is link
-  if options.folder == nil and options.embed_mode == EmbedMode.link then
-    options.folder = quarto.project.output_directory
-  end
 
   return options
+end
+
+-- Set D2 rendered diagram output path
+function setD2outputPath(options, tmpdir)
+
+  -- determine path name of output file
+  local outputFilename = options.filename .. "." .. options.format
+  local outputFolder = tmpdir
+  
+  if options.folder ~= nil then
+    os.execute("mkdir -p " .. options.folder)
+    outputFolder = options.folder
+  elseif quarto.project.output_directory ~= nil and options.embed_mode == EmbedMode.link then
+    -- Set the default folder to project output directory when embed_mode is link
+    outputFolder = quarto.project.output_directory
+  end
+
+  -- Set default folder to resource_path
+  return pandoc.path.join({outputFolder, outputFilename})
 end
   
 local function render_graph(globalOptions)
@@ -168,17 +194,18 @@ local function render_graph(globalOptions)
         options[k] = v
       end
       
-      options = setPreD2RenderOptions(options)
-      
-      if options.echo then
-        cb.classes:insert('sourceCode')
-        cb.classes:insert('cell-code')
-      end
-      
       if options.file == nil and cb.text == nil then
         return nil
       end
+      
+      options = setD2Options(options)
 
+      -- add classes for code folding
+      if options.echo then
+        cb.classes:insert("sourceCode")
+        cb.classes:insert("cell-code")
+      end
+      
       -- Generate diagram using `d2` CLI utility
       local result = pandoc.system.with_temporary_directory('d2-render', function (tmpdir)
         -- determine path name of input file
@@ -193,10 +220,8 @@ local function render_graph(globalOptions)
 
         if is_nonempty_string(options.file) then
           local d2File = io.open(options.file)
-          if d2File == nil then
-            print("Error: Diagram file " .. options.file .. " can't be opened")
-            return nil
-          end
+          assert(d2File ~= nil,
+             "Error: Diagram file " .. options.file .. " can't be opened")
 
           local d2Text = d2File:read('*all')
           cb.text = d2Text
@@ -207,15 +232,7 @@ local function render_graph(globalOptions)
         tmpFile:close()
           
         -- determine path name of output file
-        local outputPath
-        local outputFilename = options.filename .. "." .. options.format
-        
-        if options.folder ~= nil then
-          os.execute("mkdir -p " .. options.folder)
-          outputPath = pandoc.path.join({options.folder, outputFilename})
-        else
-          outputPath = pandoc.path.join({tmpdir, outputFilename})
-        end
+        local outputPath = setD2outputPath(options, tmpdir)
 
         -- run d2
         os.execute(
@@ -236,37 +253,33 @@ local function render_graph(globalOptions)
           data = outputFile:read('*all')
           outputFile:close()
         end
-          
-        local mimetype
         
+        -- default for png and gif format
+        local mimetype = "image/" .. options.format
+
+        -- replace if svg or pdf format
         if options.format == "svg" then
           mimetype = "image/svg+xml"
-        elseif options.format == "png" then
-          mimetype = "image/png"
         elseif options.format == "pdf" then
           mimetype = "application/pdf"
-        elseif options.format == "gif" then
-          mimetype = "image/gif"
+        end
+
+        if options.embed_mode == EmbedMode.link and options.folder ~= nil then
+          return outputPath
         end
         
+        os.remove(outputPath)
+        
         if options.embed_mode == EmbedMode.link then
-          if options.folder ~= nil then
-            return outputPath
-          end
-          
-          pandoc.mediabag.insert(outputFilename, mt, data)
+          local outputFilename = pandoc.path.filename(outputPath)
+          pandoc.mediabag.insert(outputFilename, mimetype, data)
           return outputFilename
         elseif options.embed_mode == EmbedMode.raw then
-          os.remove(outputPath)
           return data
         elseif options.embed_mode == EmbedMode.inline then
-          if options.format ~= "pdf" then
-            os.remove(outputPath)
-            return "data:" .. mimetype .. ";base64," .. quarto.base64.encode(data)
-          else
-            print("Error: Unsupported format")
-            return nil
-          end
+          assert(options.format ~= "pdf",
+             "Error: pdf is an unsupported format for inline `embed_mode`")
+          return "data:" .. mimetype .. ";base64," .. quarto.base64.encode(data)
         end
       end)
 
