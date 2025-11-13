@@ -143,7 +143,7 @@ function setD2Options(options)
   end
 
   -- Set the default format to pdf since svg is not supported in PDF output
-  if options.format == D2Format.svg and quarto.doc.is_format("latex") then
+  if options.format == D2Format.svg and quarto.doc.is_format("latex") and not quarto.doc.is_format("beamer") then
     options.format = D2Format.pdf
   end
   -- Set the default format to svg since pdf is not supported in Typst output
